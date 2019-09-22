@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "production") {
 
 app.get('/api/ping', function (req, res) {
  return res.json({
-   foo: 'bar'
+   foo: 'baz'
  });
 });
 
