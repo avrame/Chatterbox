@@ -1,15 +1,5 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-
-fetch('api/ping', {
-  accept: "application/json"
-})
-  .then(checkStatus)
-  .then(parseJSON)
-  .then((json) => {
-    console.log(json)
-  });
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -27,22 +17,58 @@ function parseJSON(response) {
 }
 
 function App() {
+  const [newMessageText, setNewMessageText] = useState('');
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  function fetchMessages() {
+    fetch('api/messages', {
+      accept: "application/json"
+    })
+      .then(checkStatus)
+      .then(parseJSON)
+      .then((json) => {
+        if (json.messages && json.messages.length) {
+          setMessages(json.messages);
+        }
+      });
+  }
+
+  function updateMessageText(e) {
+    setNewMessageText(e.target.value);
+  }
+
+  function sendMessage(e) {
+    e.preventDefault();
+    setNewMessageText('');
+    fetch('api/message', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: newMessageText })
+    })
+      .then(checkStatus)
+      .then(() => {
+        fetchMessages();
+      })
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" onSubmit={sendMessage}>
+      <h1>Chatterbox</h1>
+      <ul>
+        {
+          messages.map((message, idx) => <li key={idx}>{ message.text }</li>)
+        }
+      </ul>
+      <form>
+        <input type="text" value={newMessageText} onChange={updateMessageText} />
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 }
