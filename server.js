@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3001;
 app.use(express.static(path.join(__dirname, 'build')));
 
 // Express only serves static assets in production
+console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
