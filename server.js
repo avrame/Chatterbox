@@ -15,21 +15,27 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
+console.log('process.env.MONGODB_PASSWORD', process.env.MONGODB_PASSWORD)
+
 const mongo_uri = `mongodb+srv://avrame:${process.env.MONGODB_PASSWORD}@chatterbox-abw5o.mongodb.net/test?retryWrites=true&w=majority`;
 
 app.get('/api/messages', function (req, res) {
   const client = new MongoClient(mongo_uri, { useNewUrlParser: true });
   client.connect(connectError => {
-    const db = client.db("chatterbox");
-    const collection = db.collection("messages");
-    collection.find({}).toArray(function(findError, messages) {
-      if (findError) {
-        console.error(findError);
-        res.sendStatus(500);
-      } else {
-        res.json({ messages });
-      }
-    });
+    if (connectError) {
+      res.sendStatus(500);
+    } else {
+      const db = client.db("chatterbox");
+      const collection = db.collection("messages");
+      collection.find({}).toArray(function(findError, messages) {
+        if (findError) {
+          console.error(findError);
+          res.sendStatus(500);
+        } else {
+          res.json({ messages });
+        }
+      });
+    }
     client.close();
   });
 });
