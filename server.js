@@ -19,14 +19,16 @@ const mongo_uri = `mongodb+srv://avrame:${process.env.MONGODB_PASSWORD}@chatterb
 
 app.get('/api/messages', function (req, res) {
   const client = new MongoClient(mongo_uri, { useNewUrlParser: true });
-  client.connect(err => {
+  client.connect(connectError => {
     const db = client.db("chatterbox");
     const collection = db.collection("messages");
-    collection.find({}).toArray(function(err, messages) {
-      if (err) {
-        console.error(err);
+    collection.find({}).toArray(function(findError, messages) {
+      if (findError) {
+        console.error(findError);
+        res.sendStatus(500);
+      } else {
+        res.json({ messages });
       }
-      res.json({ messages });
     });
     client.close();
   });
