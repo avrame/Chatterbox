@@ -21,12 +21,14 @@ app.get('/api/messages', function (req, res) {
   const client = new MongoClient(mongo_uri, { useNewUrlParser: true });
   client.connect(connectError => {
     if (connectError) {
+      console.error('connection error')
       res.sendStatus(500);
     } else {
       const db = client.db("chatterbox");
       const collection = db.collection("messages");
       collection.find({}).toArray(function(findError, messages) {
         if (findError) {
+          console.error('collection.find error')
           console.error(findError);
           res.sendStatus(500);
         } else {
