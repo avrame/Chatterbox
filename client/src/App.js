@@ -34,22 +34,26 @@ function App() {
   const lsLoggedIn = localStorage.getItem('loggedIn');
   const [loggedIn, setLoggedIn] = useState(lsLoggedIn === 'true');
   const [roomName, setRoomName] = useState('');
+  const [roomDescription, setRoomDescription] = useState('');
 
   useEffect(() => {
     if (loggedIn) fetchRooms();
   }, []);
 
-  function fetchRooms() {
-    fetch('rooms', {
-      accept: "application/json"
-    })
-      .then(checkStatus)
-      .then(parseJSON)
-      .then((json) => {
-        if (json.rooms && json.rooms.length) {
-          setRooms(json.rooms);
-        }
+  async function fetchRooms() {
+    try {
+      const response = await fetch('rooms', {
+        accept: "application/json"
       });
+
+      const json = await response.json();
+
+      if (json.rooms && json.rooms.length) {
+        setRooms(json.rooms);
+      }
+    } catch(error) {
+      console.error(error);
+    }
   }
 
   function showLogin() {
@@ -95,10 +99,33 @@ function App() {
     setRoomName(e.target.value);
   }
 
-  function createNewRoom(e) {
+  function updateRoomDescription(e) {
+    setRoomDescription(e.target.value);
+  }
+
+  async function createNewRoom(e) {
     e.preventDefault();
-    console.log(roomName);
+    
+    try {
+      const response = await fetch('rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          roomName,
+          roomDescription,
+        })
+      });
+
+      const json = await response.json();
+      setRooms(json.rooms);
+    } catch(error) {
+      console.error(error);
+    }
+    
     setRoomName('');
+    setRoomDescription('')
   }
 
   return (
@@ -109,10 +136,12 @@ function App() {
           {
             loggedIn
             ? <AnchorButton onClick={handleLogout}>Logout</AnchorButton>
-            : <>
-              <AnchorButton onClick={showLogin}>Login</AnchorButton>
-              <AnchorButton onClick={showSignup}>Sign Up</AnchorButton>
-            </>
+            : (
+              <>
+                <AnchorButton onClick={showLogin}>Login</AnchorButton>
+                <AnchorButton onClick={showSignup}>Sign Up</AnchorButton>
+              </>
+            )
           }
         </ButtonGroup>
       </header>
@@ -122,11 +151,16 @@ function App() {
           ? (
             <>
               <form onSubmit={createNewRoom}>
-                <FormGroup label="Create a Room" className="inline" labelFor="new_room" inline={true}>
-                  <InputGroup id="new_room" value={roomName} onChange={updateRoomName} />
+                <h2>Create a Room</h2>
+                <FormGroup label="Name" className="inline" labelFor="room_name" inline={true}>
+                  <InputGroup id="room_name" value={roomName} onChange={updateRoomName} />
+                </FormGroup>
+                <FormGroup label="Description" className="inline" labelFor="room_desc" inline={true}>
+                  <InputGroup id="room_desc" value={roomDescription} onChange={updateRoomDescription} />
                 </FormGroup>
                 <Button type="submit">Create</Button>
               </form>
+
               <h2>Rooms</h2>
               <HTMLTable>
                 <thead>
