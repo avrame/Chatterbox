@@ -14,7 +14,8 @@ function Login({ onLoggedIn }) {
     setPassword(e.target.value);
   }
 
-  async function loginUser() {
+  async function loginUser(e) {
+    e.preventDefault();
     try {
       const response = await fetch('/users/login', {
         method: 'POST',

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Room = require('../models/room');
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   Room.find((err, rooms) => {
     if (err) {
       res.statusCode = 500;
@@ -16,11 +16,31 @@ router.get('/', (req, res, next) => {
   });
 });
 
-router.post('/', (req, res, next) => {
+router.get('/:roomName', (req, res) => {
+  console.log('req.params', req.params)
+  Room.find({ name: req.params.roomName }, (err, room) => {
+    res.setHeader('Content-Type', 'application/json');
+    if (err) {
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({ err });
+    } else {
+      if (room.length) {
+        res.statusCode = 200;
+        res.json({ room: room[0] });
+      } else {
+        res.statusCode = 404;
+        res.json({ err: 'No room found' });
+      }
+    }
+  })
+})
+
+router.post('/', (req, res) => {
   Room.create({
     name: req.body.roomName,
     description: req.body.roomDescription,
-  }, (createError, rooms) => {
+  }, (createError) => {
     if (createError) {
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');

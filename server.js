@@ -3,13 +3,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const express = require('express');
 const path = require('path');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var session = require('express-session');
-var LocalStrategy = require('passport-local').Strategy;
-var User = require('./models/user');
-var users = require('./routes/users');
-var rooms = require('./routes/rooms');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const session = require('express-session');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('./models/user');
+const users = require('./routes/users');
+const rooms = require('./routes/rooms');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
