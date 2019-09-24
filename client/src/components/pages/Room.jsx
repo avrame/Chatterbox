@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core';
 
+let messageSocket = new WebSocket("ws://localhost:8080");
+
 function Room({ match }) {
   const [messageText, setMessageText] = useState('');
   const [roomName, setRoomName] = useState('');
   const [roomDesc, setRoomDesc] = useState('');
+  const [socketOpen, setSocketOpen] = useState(false);
 
   useEffect(() => {
     getRoom();
+    messageSocket.addEventListener('open', (event) => {
+      console.log('socket open', event)
+      setSocketOpen(true);
+    });
+    messageSocket.addEventListener('message', event => {
+      console.log('message', event.data)
+    });
   }, []);
 
   async function getRoom() {
@@ -36,13 +46,15 @@ function Room({ match }) {
   async function sendMessage(e) {
     e.preventDefault();
 
-    const response = await fetch('/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ text: messageText, roomName: match.params.roomName })
-    })
+    if (socketOpen) {
+      messageSocket.send(JSON.stringify({
+        action: 'postMessage',
+        data: {
+          text: messageText,
+          room: roomName,
+        }
+      }));
+    }
 
     setMessageText('');
   }

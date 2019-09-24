@@ -17,7 +17,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:roomName', (req, res) => {
-  console.log('req.params', req.params)
   Room.find({ name: req.params.roomName }, (err, room) => {
     res.setHeader('Content-Type', 'application/json');
     if (err) {

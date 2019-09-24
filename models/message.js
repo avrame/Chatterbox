@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var MessageSchema = new mongoose.Schema({
   room: {
     type: String,
-    unique: true,
+    unique: false,
     required: true
   },
   text: {
