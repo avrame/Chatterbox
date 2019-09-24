@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import LoginOrRegister from './components/LoginOrRegister';
 import './App.css';
 
 function checkStatus(response) {
@@ -18,21 +19,19 @@ function parseJSON(response) {
 
 function App() {
   const [newMessageText, setNewMessageText] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const lsLoggedIn = localStorage.getItem('loggedIn');
+  const [loggedIn, setLoggedIn] = useState(lsLoggedIn === 'true');
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
-  function fetchMessages() {
-    fetch('api/messages', {
+  function fetchRooms() {
+    fetch('rooms', {
       accept: "application/json"
     })
       .then(checkStatus)
       .then(parseJSON)
       .then((json) => {
-        if (json.messages && json.messages.length) {
-          setMessages(json.messages);
+        if (json.rooms && json.rooms.length) {
+          setRooms(json.rooms);
         }
       });
   }
@@ -43,32 +42,74 @@ function App() {
 
   function sendMessage(e) {
     e.preventDefault();
+    console.log(newMessageText)
     setNewMessageText('');
-    fetch('api/message', {
-      method: 'POST',
+  }
+
+  function handleLoggedIn() {
+    localStorage.setItem('loggedIn', 'true');
+    setLoggedIn(true);
+    fetchRooms();
+  }
+
+  async function handleLogout(e) {
+    e.preventDefault();
+    // log out user
+    const response = await fetch('/users/logout', {
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ message: newMessageText })
-    })
-      .then(checkStatus)
-      .then(() => {
-        fetchMessages();
-      })
+      }
+    });
+    const json = await response.json();
+    if (json.success) {
+      localStorage.removeItem('loggedIn');
+      setLoggedIn(false);
+    }
   }
 
   return (
     <div className="App" onSubmit={sendMessage}>
-      <h1>Chatterbox</h1>
-      <ul>
-        {
-          messages.map((message, idx) => <li key={idx}>{ message.text }</li>)
-        }
-      </ul>
-      <form>
-        <input type="text" value={newMessageText} onChange={updateMessageText} />
-        <button type="submit">Send</button>
-      </form>
+      <header>
+        <h1>Chatterbox</h1>
+      </header>
+      {
+        loggedIn
+        ? <a href="#" onClick={handleLogout}>Logout</a>
+        : <LoginOrRegister onLoggedIn={handleLoggedIn} />
+      }
+      {
+        loggedIn
+        ? (
+          <>
+            <h2>Rooms</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  rooms.map((room, idx) => {
+                    return (
+                      <tr key={idx}>
+                        <td>{ room.name }</td>
+                        <td>{ room.description }</td>
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </table>
+            <form>
+              <input type="text" value={newMessageText} onChange={updateMessageText} />
+              <button type="submit">Send</button>
+            </form>
+          </>
+        )
+        : null
+      }
     </div>
   );
 }
