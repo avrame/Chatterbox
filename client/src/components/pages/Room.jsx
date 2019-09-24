@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core';
 
 let messageSocket = new WebSocket("ws://localhost:8080");
 
 function Room({ match }) {
+  const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const [roomName, setRoomName] = useState('');
   const [roomDesc, setRoomDesc] = useState('');
@@ -11,6 +13,7 @@ function Room({ match }) {
 
   useEffect(() => {
     getRoom();
+    getMessages();
     messageSocket.addEventListener('open', (event) => {
       console.log('socket open', event)
       setSocketOpen(true);
@@ -39,6 +42,24 @@ function Room({ match }) {
     }
   }
 
+  async function getMessages() {
+    try {
+      const response = await fetch(`/messages/${match.params.roomName}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      const json = await response.json();
+      if (json && json.messages) {
+        setMessages(json.messages);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   function updateMessageText(e) {
     setMessageText(e.target.value);
   }
@@ -61,8 +82,16 @@ function Room({ match }) {
 
   return (
     <div className="room">
-      <h1>{ roomName }</h1>
+      <Link to='/'>&lt; Back</Link>
+      <h2>{ roomName }</h2>
       <p>{ roomDesc }</p>
+      <ol>
+        {
+          messages.map((message, idx) => {
+            return <li key={idx}>{ message.text }</li>;
+          })
+        }
+      </ol>
       <form onSubmit={sendMessage}>
         <FormGroup>
           <InputGroup value={messageText} onChange={updateMessageText} />
