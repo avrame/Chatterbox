@@ -102,66 +102,66 @@ function App() {
   }
 
   return (
-    <>
-    <header>
-      <h1>Chatterbox</h1>
-      <ButtonGroup className="account-buttons">
+    <div className="app">
+      <header>
+        <h1>Chatterbox</h1>
+        <ButtonGroup className="account-buttons">
+          {
+            loggedIn
+            ? <AnchorButton onClick={handleLogout}>Logout</AnchorButton>
+            : <>
+              <AnchorButton onClick={showLogin}>Login</AnchorButton>
+              <AnchorButton onClick={showSignup}>Sign Up</AnchorButton>
+            </>
+          }
+        </ButtonGroup>
+      </header>
+      <div className="content">      
         {
           loggedIn
-          ? <AnchorButton onClick={handleLogout}>Logout</AnchorButton>
-          : <>
-            <AnchorButton onClick={showLogin}>Login</AnchorButton>
-            <AnchorButton onClick={showSignup}>Sign Up</AnchorButton>
-          </>
+          ? (
+            <>
+              <form onSubmit={createNewRoom}>
+                <FormGroup label="Create a Room" className="inline" labelFor="new_room" inline={true}>
+                  <InputGroup id="new_room" value={roomName} onChange={updateRoomName} />
+                </FormGroup>
+                <Button type="submit">Create</Button>
+              </form>
+              <h2>Rooms</h2>
+              <HTMLTable>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    rooms.map((room, idx) => {
+                      return (
+                        <tr key={idx}>
+                          <td>{ room.name }</td>
+                          <td>{ room.description }</td>
+                        </tr>
+                      );
+                    })
+                  }
+                </tbody>
+              </HTMLTable>
+            </>
+          )
+          : null
         }
-      </ButtonGroup>
-    </header>
-    <div className="App">      
-      {
-        loggedIn
-        ? (
-          <>
-            <form onSubmit={createNewRoom}>
-              <FormGroup label="Create a Room" className="inline" labelFor="new_room" inline={true}>
-                <InputGroup id="new_room" value={roomName} onChange={updateRoomName} />
-              </FormGroup>
-              <Button type="submit">Create</Button>
-            </form>
-            <h2>Rooms</h2>
-            <HTMLTable>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  rooms.map((room, idx) => {
-                    return (
-                      <tr key={idx}>
-                        <td>{ room.name }</td>
-                        <td>{ room.description }</td>
-                      </tr>
-                    );
-                  })
-                }
-              </tbody>
-            </HTMLTable>
-          </>
-        )
-        : null
-      }
 
-      <Dialog title="Sign Up" isOpen={signupIsOpen} onClose={hideSignup} style={{ width: 300 }}>
-        <Signup onLoggedIn={handleLoggedIn} />
-      </Dialog>
+        <Dialog title="Sign Up" isOpen={signupIsOpen} onClose={hideSignup} style={{ width: 300 }}>
+          <Signup onLoggedIn={handleLoggedIn} />
+        </Dialog>
 
-      <Dialog title="Login" isOpen={loginIsOpen} onClose={hideLogin} style={{ width: 300 }}>
-        <Login onLoggedIn={handleLoggedIn} />
-      </Dialog>
+        <Dialog title="Login" isOpen={loginIsOpen} onClose={hideLogin} style={{ width: 300 }}>
+          <Login onLoggedIn={handleLoggedIn} />
+        </Dialog>
+      </div>
     </div>
-    </>
   );
 }
 

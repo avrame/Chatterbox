@@ -6,20 +6,16 @@ body {
   background: #DDD;
 }
 
-.App {
+.app {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   background: #FFF;
-  padding: 20px;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   box-shadow: #999 6px 6px 8px;
 }
 
 header {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -27,11 +23,14 @@ header {
   background: #BBB;
   margin-top: 40px;
   border-radius: 8px 8px 0 0;
-  box-shadow: #999 6px 6px 8px;
 }
 
 header h1 {
   margin: 0;
+}
+
+.content {
+  padding: 20px;
 }
 
 /* Blueprint overrides */
