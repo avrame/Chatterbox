@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import LoginOrRegister from './components/LoginOrRegister';
+import Signup from './components/Signup';
+import Login from './components/Login';
+import {
+  AnchorButton,
+  Button,
+  ButtonGroup,
+  Dialog,
+  FormGroup,
+  InputGroup,
+  HTMLTable
+} from '@blueprintjs/core';
 import './App.css';
 
 function checkStatus(response) {
@@ -18,10 +28,16 @@ function parseJSON(response) {
 }
 
 function App() {
-  const [newMessageText, setNewMessageText] = useState('');
   const [rooms, setRooms] = useState([]);
+  const [loginIsOpen, setLoginIsOpen] = useState(false);
+  const [signupIsOpen, setSignupIsOpen] = useState(false);
   const lsLoggedIn = localStorage.getItem('loggedIn');
   const [loggedIn, setLoggedIn] = useState(lsLoggedIn === 'true');
+  const [roomName, setRoomName] = useState('');
+
+  useEffect(() => {
+    if (loggedIn) fetchRooms();
+  }, []);
 
   function fetchRooms() {
     fetch('rooms', {
@@ -36,19 +52,27 @@ function App() {
       });
   }
 
-  function updateMessageText(e) {
-    setNewMessageText(e.target.value);
+  function showLogin() {
+    setLoginIsOpen(true);
   }
 
-  function sendMessage(e) {
-    e.preventDefault();
-    console.log(newMessageText)
-    setNewMessageText('');
+  function hideLogin() {
+    setLoginIsOpen(false);
+  }
+
+  function showSignup() {
+    setSignupIsOpen(true);
+  }
+
+  function hideSignup() {
+    setSignupIsOpen(false);
   }
 
   function handleLoggedIn() {
     localStorage.setItem('loggedIn', 'true');
     setLoggedIn(true);
+    hideLogin();
+    hideSignup();
     fetchRooms();
   }
 
@@ -67,22 +91,44 @@ function App() {
     }
   }
 
+  function updateRoomName(e) {
+    setRoomName(e.target.value);
+  }
+
+  function createNewRoom(e) {
+    e.preventDefault();
+    console.log(roomName);
+    setRoomName('');
+  }
+
   return (
-    <div className="App" onSubmit={sendMessage}>
-      <header>
-        <h1>Chatterbox</h1>
-      </header>
-      {
-        loggedIn
-        ? <a href="#" onClick={handleLogout}>Logout</a>
-        : <LoginOrRegister onLoggedIn={handleLoggedIn} />
-      }
+    <>
+    <header>
+      <h1>Chatterbox</h1>
+      <ButtonGroup className="account-buttons">
+        {
+          loggedIn
+          ? <AnchorButton onClick={handleLogout}>Logout</AnchorButton>
+          : <>
+            <AnchorButton onClick={showLogin}>Login</AnchorButton>
+            <AnchorButton onClick={showSignup}>Sign Up</AnchorButton>
+          </>
+        }
+      </ButtonGroup>
+    </header>
+    <div className="App">      
       {
         loggedIn
         ? (
           <>
+            <form onSubmit={createNewRoom}>
+              <FormGroup label="Create a Room" className="inline" labelFor="new_room" inline={true}>
+                <InputGroup id="new_room" value={roomName} onChange={updateRoomName} />
+              </FormGroup>
+              <Button type="submit">Create</Button>
+            </form>
             <h2>Rooms</h2>
-            <table>
+            <HTMLTable>
               <thead>
                 <tr>
                   <th>Name</th>
@@ -101,16 +147,21 @@ function App() {
                   })
                 }
               </tbody>
-            </table>
-            <form>
-              <input type="text" value={newMessageText} onChange={updateMessageText} />
-              <button type="submit">Send</button>
-            </form>
+            </HTMLTable>
           </>
         )
         : null
       }
+
+      <Dialog title="Sign Up" isOpen={signupIsOpen} onClose={hideSignup} style={{ width: 300 }}>
+        <Signup onLoggedIn={handleLoggedIn} />
+      </Dialog>
+
+      <Dialog title="Login" isOpen={loginIsOpen} onClose={hideLogin} style={{ width: 300 }}>
+        <Login onLoggedIn={handleLoggedIn} />
+      </Dialog>
     </div>
+    </>
   );
 }
 

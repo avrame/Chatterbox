@@ -1,1 +1,41 @@
+@import "~normalize.css";
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
 
+body {
+  background: #DDD;
+}
+
+.App {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #FFF;
+  padding: 20px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: #999 6px 6px 8px;
+}
+
+header {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #BBB;
+  margin-top: 40px;
+  border-radius: 8px 8px 0 0;
+  box-shadow: #999 6px 6px 8px;
+}
+
+header h1 {
+  margin: 0;
+}
+
+/* Blueprint overrides */
+.bp3-form-group.inline {
+  display: inline-flex;
+  margin-right: 16px;
+}
