@@ -49,30 +49,34 @@ wss.on('connection', (ws) => {
     const json = JSON.parse(message);
     switch(json.action) {
       case 'postMessage': {
-        Message.create({
-          text: json.data.text,
-          room: json.data.room
-        }, (error, message) => {
-          if (error) {
-            // respond with error message
-            ws.send(JSON.stringify({ error }));
-          } else {
-            wss.clients.forEach(client => {
-              if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({
-                  action: 'messageSent',
-                  data: message,
-                }));
-              }
-            })
-          }
-        })
+        handlePostMessage(ws, json);
         break;
       }
       default:
         ws.send('I don\'t understand this action');
     }
   });
-})
+});
+
+function handlePostMessage(ws, json) {
+  Message.create({
+    text: json.data.text,
+    room: json.data.room
+  }, (error, message) => {
+    if (error) {
+      // respond with error message
+      ws.send(JSON.stringify({ error }));
+    } else {
+      wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            action: 'messageSent',
+            data: message,
+          }));
+        }
+      })
+    }
+  });
+}
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));

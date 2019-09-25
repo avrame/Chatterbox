@@ -23,7 +23,6 @@
   display: flex;
   min-height: min-content;
   flex-direction: column;
-  justify-content: flex-end;
 }
 .messages > div {
   padding: 1rem 0;
