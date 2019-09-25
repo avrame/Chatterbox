@@ -44,6 +44,12 @@ app.use('/users', users);
 app.use('/rooms', isAuthorized, rooms);
 app.use('/messages', isAuthorized, messages);
 
+if (process.env.NODE_ENV === "production") {
+  app.get('/*', (req, res) => {
+    res.sendFile('client/build/index.html');
+  });
+}
+
 const server = app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 const wss = new WebSocket.Server({ server });
 
