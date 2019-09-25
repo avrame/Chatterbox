@@ -61,6 +61,7 @@ wss.on('connection', (ws) => {
 
 function handlePostMessage(ws, json) {
   Message.create({
+    user: json.data.user_id,
     text: json.data.text,
     room: json.data.room
   }, (error, message) => {
@@ -68,12 +69,19 @@ function handlePostMessage(ws, json) {
       // respond with error message
       ws.send(JSON.stringify({ error }));
     } else {
-      wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({
-            action: 'messageSent',
-            data: message,
-          }));
+      User.findOne({ _id: message.user }, (userError, user) => {
+        if (userError) {
+          ws.send(JSON.stringify({ error }));
+        } else {
+          message.user = user;
+          wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify({
+                action: 'messageSent',
+                data: message,
+              }));
+            }
+          })
         }
       })
     }

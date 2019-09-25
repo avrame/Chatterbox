@@ -25,12 +25,20 @@
   flex-direction: column;
 }
 .messages > div {
-  padding: 1rem 0;
+  padding: .5rem 0;
   margin: 0 .75rem;
   border-bottom: 1px dashed #CCC;
+  display: flex;
+  align-items: center;
 }
 .messages > div:last-of-type {
   border-bottom: none;
+}
+.messages > div > img {
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  margin-right: .5rem;
 }
 .messages .bottom {
   height: 0;

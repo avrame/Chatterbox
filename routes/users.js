@@ -19,10 +19,12 @@ router.post('/signup', (req, res, next) => {
         passport.authenticate('local')(req, res, () => {
           User.findOne({
             username: req.body.username
-          }, (err, person) => {
+          }, (err, createdUser) => {
+            console.log('createdUser', createdUser)
             res.statusCode = 200;
             res.json({
               success: true,
+              user: createdUser,
               status: 'Registration Successful!',
             });
           });
@@ -34,7 +36,7 @@ router.post('/signup', (req, res, next) => {
 router.post('/login', passport.authenticate('local'), (req, res) => {
   User.findOne({
     username: req.body.username
-  }, (err, person) => {
+  }, (err, user) => {
     if (err) {
       res.sendStatus(401);
     } else {
@@ -42,6 +44,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
       res.setHeader('Content-Type', 'application/json');
       res.json({
         success: true,
+        user,
         status: 'You are successfully logged in!'
       });
     }

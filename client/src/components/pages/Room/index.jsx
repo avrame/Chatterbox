@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core';
+import gravatar from 'gravatar';
 
 import styles from './index.module.css';
 
 let messageSocket;
+let user;
 
 function Room({ match }) {
   const [messages, setMessages] = useState([]);
@@ -18,6 +20,7 @@ function Room({ match }) {
   useEffect(() => {
     getRoom();
     getMessages();
+    user = JSON.parse(localStorage.getItem('user'));
   }, []);
 
   useEffect(() => {
@@ -35,8 +38,9 @@ function Room({ match }) {
     messageSocket.onmessage = event => {
       const json = JSON.parse(event.data);
       if (json && json.data) {
+        console.log(json)
         if (json.data.room === roomName && json.data.text) {
-          setMessages([...messages, { text: json.data.text }]);
+          setMessages([...messages, json.data]);
         }
       }
     };
@@ -94,6 +98,7 @@ function Room({ match }) {
       messageSocket.send(JSON.stringify({
         action: 'postMessage',
         data: {
+          user_id: user._id,
           text: messageText,
           room: roomName,
         }
@@ -112,7 +117,13 @@ function Room({ match }) {
         <div className={styles.messages}>
           {
             messages.map((message, idx) => {
-              return <div key={idx}>{ message.text }</div>;
+              let gravURL = gravatar.url(message.user.email)
+              return (
+                <div key={idx}>
+                  <img src={gravURL} />
+                  { message.text }
+                </div>
+              );
             })
           }
           <p ref={bottomOfChat} className={styles.bottom}></p>

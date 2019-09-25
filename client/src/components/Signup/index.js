@@ -33,7 +33,7 @@ function Signup({ onLoggedIn }) {
 
       const json = await response.json();
       if (json.success) {
-        onLoggedIn();
+        onLoggedIn(json.user);
       }
     } catch (error) {
       console.error('Error:', error);

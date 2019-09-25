@@ -19,8 +19,9 @@ function App() {
   const lsLoggedIn = localStorage.getItem('loggedIn');
   const [loggedIn, setLoggedIn] = useState(lsLoggedIn === 'true');
 
-  function handleLoggedIn() {
+  function handleLoggedIn(user) {
     localStorage.setItem('loggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify(user));
     setLoggedIn(true);
     hideLogin();
     hideSignup();
@@ -35,8 +36,9 @@ function App() {
       }
     });
     const json = await response.json();
+    console.log(json)
     if (json.success) {
-      localStorage.removeItem('loggedIn');
+      localStorage.clear();
       setLoggedIn(false);
     }
   }

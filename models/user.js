@@ -1,5 +1,6 @@
-var mongoose = require('mongoose');
-var passportLocalMongoose = require('passport-local-mongoose');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const passportLocalMongoose = require('passport-local-mongoose');
 
 var UserSchema = new mongoose.Schema({
   username: {
@@ -11,7 +12,8 @@ var UserSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true
-  }
+  },
+  messages: [{ type: Schema.Types.ObjectId, ref: 'Message' }]
 });
 
 UserSchema.plugin(passportLocalMongoose);
