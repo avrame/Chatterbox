@@ -46,7 +46,7 @@ app.use('/messages', isAuthorized, messages);
 
 if (process.env.NODE_ENV === "production") {
   app.get('/*', (req, res) => {
-    res.sendFile('client/build/index.html');
+    res.sendFile('index.html');
   });
 }
 
