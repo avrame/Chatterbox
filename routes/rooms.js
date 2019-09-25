@@ -4,13 +4,12 @@ const Room = require('../models/room');
 
 router.get('/', (req, res) => {
   Room.find((err, rooms) => {
+    res.setHeader('Content-Type', 'application/json');
     if (err) {
       res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
       res.json({ err });
     } else {
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
       res.json({ rooms });
     }
   });
@@ -21,7 +20,6 @@ router.get('/:roomName', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     if (err) {
       res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
       res.json({ err });
     } else {
       if (room.length) {
@@ -40,19 +38,17 @@ router.post('/', (req, res) => {
     name: req.body.roomName,
     description: req.body.roomDescription,
   }, (createError) => {
+    res.setHeader('Content-Type', 'application/json');
     if (createError) {
       res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
       res.json({ error: createError });
     } else {
       Room.find((findError, rooms) => {
         if (findError) {
           res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
           res.json({ error: findError });
         } else {
           res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
           res.json({ rooms });
         }
       });

@@ -13,6 +13,7 @@ const Message = require('./models/message');
 const users = require('./routes/users');
 const rooms = require('./routes/rooms');
 const messages = require('./routes/messages');
+const isAuthorized = require('./auth');
 
 const app = express();
 const wss = new WebSocket.Server({ port: 8080 });
@@ -40,8 +41,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.use('/users', users);
-app.use('/rooms', rooms);
-app.use('/messages', messages);
+app.use('/rooms', isAuthorized, rooms);
+app.use('/messages', isAuthorized, messages);
 
 // Web Sockets
 wss.on('connection', (ws) => {

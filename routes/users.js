@@ -8,9 +8,9 @@ router.post('/signup', (req, res, next) => {
       username: req.body.username
     }),
     req.body.password, (err, user) => {
+      res.setHeader('Content-Type', 'application/json');
       if (err) {
         res.statusCode = 500;
-        res.setHeader('Content-Type', 'application/json');
         res.json({
           err: err
         });
@@ -20,7 +20,6 @@ router.post('/signup', (req, res, next) => {
             username: req.body.username
           }, (err, person) => {
             res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
             res.json({
               success: true,
               status: 'Registration Successful!',

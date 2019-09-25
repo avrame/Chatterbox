@@ -14,7 +14,7 @@ function Home ({ loggedIn }) {
 
   useEffect(() => {
     if (loggedIn) fetchRooms();
-  }, []);
+  }, [loggedIn]);
 
   async function fetchRooms() {
     try {
