@@ -6,6 +6,11 @@ var RoomSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
+  slug: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   description: {
     type: String,
     unique: false,

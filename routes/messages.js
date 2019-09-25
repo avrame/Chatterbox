@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../models/message');
 
-router.get('/:room', (req, res) => {
-  Message.find({ room: req.params.room }).populate('user').exec((error, messages) => {
+router.get('/:roomSlug', (req, res) => {
+  Message.find({ room: req.params.roomSlug }).populate('user').exec((error, messages) => {
     res.setHeader('Content-Type', 'application/json');
     if (error) {
       res.statusCode = 500;

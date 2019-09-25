@@ -38,8 +38,7 @@ function Room({ match }) {
     messageSocket.onmessage = event => {
       const json = JSON.parse(event.data);
       if (json && json.data) {
-        console.log(json)
-        if (json.data.room === roomName && json.data.text) {
+        if (json.data.room === match.params.roomSlug && json.data.text) {
           setMessages([...messages, json.data]);
         }
       }
@@ -52,7 +51,7 @@ function Room({ match }) {
 
   async function getRoom() {
     try {
-      const response = await fetch(`/rooms/${match.params.roomName}`, {
+      const response = await fetch(`/rooms/${match.params.roomSlug}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
@@ -61,6 +60,7 @@ function Room({ match }) {
 
       const json = await response.json();
       if (json && json.room) {
+        console.log(json)
         setRoomName(json.room.name);
         setRoomDesc(json.room.description);
       }
@@ -71,7 +71,7 @@ function Room({ match }) {
 
   async function getMessages() {
     try {
-      const response = await fetch(`/messages/${match.params.roomName}`, {
+      const response = await fetch(`/messages/${match.params.roomSlug}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
@@ -100,7 +100,7 @@ function Room({ match }) {
         data: {
           user_id: user._id,
           text: messageText,
-          room: roomName,
+          room: match.params.roomSlug,
         }
       }));
     }

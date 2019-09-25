@@ -95,7 +95,7 @@ function Home ({ loggedIn }) {
                   rooms.map((room, idx) => {
                     return (
                       <tr key={idx}>
-                        <td><Link to={`/room/${room.name}/`}>{ room.name }</Link></td>
+                        <td><Link to={`/room/${room.slug}/`}>{ room.name }</Link></td>
                         <td>{ room.description }</td>
                       </tr>
                     );

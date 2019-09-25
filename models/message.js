@@ -4,17 +4,17 @@ const Schema = mongoose.Schema;
 var MessageSchema = new mongoose.Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
   room: {
     type: String,
-    unique: false,
-    required: true
+    unique: true,
+    required: true,
   },
   text: {
     type: String,
     unique: false,
-    required: true
+    required: true,
   }
 });
 

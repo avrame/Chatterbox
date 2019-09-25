@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Room = require('../models/room');
+const slugify = require('slugify');
 
 router.get('/', (req, res) => {
   Room.find((err, rooms) => {
@@ -15,8 +16,8 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/:roomName', (req, res) => {
-  Room.find({ name: req.params.roomName }, (err, room) => {
+router.get('/:roomSlug', (req, res) => {
+  Room.find({ slug: req.params.roomSlug }, (err, room) => {
     res.setHeader('Content-Type', 'application/json');
     if (err) {
       res.statusCode = 500;
@@ -36,6 +37,7 @@ router.get('/:roomName', (req, res) => {
 router.post('/', (req, res) => {
   Room.create({
     name: req.body.roomName,
+    slug: slugify(req.body.roomName, { lower: true }),
     description: req.body.roomDescription,
   }, (createError) => {
     res.setHeader('Content-Type', 'application/json');

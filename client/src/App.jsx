@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import {
-  AnchorButton,
-  ButtonGroup,
-  Dialog,
-} from '@blueprintjs/core';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Dialog } from '@blueprintjs/core';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Home from './components/pages/Home';
 import Room from './components/pages/Room';
+import AccountButtons from './components/AccountButtons';
 
 import './App.css';
 
@@ -25,22 +22,6 @@ function App() {
     setLoggedIn(true);
     hideLogin();
     hideSignup();
-  }
-
-  async function handleLogout(e) {
-    e.preventDefault();
-    // log out user
-    const response = await fetch('/users/logout', {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const json = await response.json();
-    console.log(json)
-    if (json.success) {
-      localStorage.clear();
-      setLoggedIn(false);
-    }
   }
 
   function showLogin() {
@@ -59,27 +40,29 @@ function App() {
     setSignupIsOpen(false);
   }
 
+  function handleLogout() {
+    setLoggedIn(false);
+  }
+
   return (
     <Router>
       <div className="app">
         <header>
           <h1>Chatterbox</h1>
-          <ButtonGroup className="account-buttons">
-            {
-              loggedIn
-              ? <AnchorButton onClick={handleLogout}>Logout</AnchorButton>
-              : (
-                <>
-                  <AnchorButton onClick={showLogin}>Login</AnchorButton>
-                  <AnchorButton onClick={showSignup}>Sign Up</AnchorButton>
-                </>
-              )
-            }
-          </ButtonGroup>
+          <AccountButtons onLogout={handleLogout}
+                          showLogin={showLogin}
+                          showSignup={showSignup}
+                          loggedIn={loggedIn} />
         </header>
         <div className="content">      
           <Route path="/" exact render={() => <Home loggedIn={loggedIn} />} />
-          <Route path="/room/:roomName" component={Room} />
+          <Route path="/room/:roomSlug" render={routeProps => (
+            loggedIn ? (
+              <Room {...routeProps} />
+            ) : (
+              <Redirect to="/" />
+            )
+          )} />
         </div>
       </div>
 
