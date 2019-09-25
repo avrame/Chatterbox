@@ -28,7 +28,7 @@ function Room({ match }) {
 
   useEffect(() => {
     const websocketURL = (window.location.host === 'localhost:3000')
-    ? 'ws://localhost:403/websocket' : 'wss://chatter-box.herokuapp.com:403/websocket';
+    ? 'ws://localhost:3001' : 'wss://chatter-box.herokuapp.com';
     messageSocket = new WebSocket(websocketURL);
     return () => {
       messageSocket.close();

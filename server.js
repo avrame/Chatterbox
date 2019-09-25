@@ -1,6 +1,8 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
+const PORT = process.env.PORT || 3001;
+
 const express = require('express');
 const WebSocket = require('ws');
 const path = require('path');
@@ -16,8 +18,6 @@ const messages = require('./routes/messages');
 const isAuthorized = require('./auth');
 
 const app = express();
-const wss = new WebSocket.Server({ port: 403, path: '/websocket' });
-const PORT = process.env.PORT || 3001;
 
 mongoose.connect(`mongodb+srv://avrame:${process.env.MONGODB_PASSWORD}@chatterbox-abw5o.mongodb.net/chatterbox?retryWrites=true&w=majority`, { useNewUrlParser: true });
 
@@ -43,6 +43,9 @@ if (process.env.NODE_ENV === "production") {
 app.use('/users', users);
 app.use('/rooms', isAuthorized, rooms);
 app.use('/messages', isAuthorized, messages);
+
+const server = app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+const wss = new WebSocket.Server({ server });
 
 // Web Sockets
 wss.on('connection', (ws) => {
@@ -88,5 +91,3 @@ function handlePostMessage(ws, json) {
     }
   });
 }
-
-app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
