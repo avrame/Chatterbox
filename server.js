@@ -62,6 +62,10 @@ wss.on('connection', (ws) => {
         handlePostMessage(ws, json);
         break;
       }
+      case 'userIsTyping': {
+        handleUserTyping(ws, json);
+        break;
+      }
       default:
         ws.send('I don\'t understand this action');
     }
@@ -92,6 +96,27 @@ function handlePostMessage(ws, json) {
               }));
             }
           })
+        }
+      })
+    }
+  });
+}
+
+function handleUserTyping(ws, json) {
+  User.findOne({ _id: json.data.user_id }, (userError, user) => {
+    if (userError) {
+      ws.send(JSON.stringify({ error }));
+    } else {
+      console.log('user', user)
+      wss.clients.forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            action: 'userIsTyping',
+            data: {
+              user,
+              room: json.data.room,
+            },
+          }));
         }
       })
     }

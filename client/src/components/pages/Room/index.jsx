@@ -8,6 +8,7 @@ import styles from './index.module.css';
 
 let messageSocket;
 let user;
+let typingTimer;
 
 function Room({ match }) {
   const [messages, setMessages] = useState([]);
@@ -16,6 +17,7 @@ function Room({ match }) {
   const [roomDesc, setRoomDesc] = useState('');
   const [socketOpen, setSocketOpen] = useState(false);
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+  const [userTyping, setUserTyping] = useState('');
 
   const bottomOfChat = useRef(null);
   const messageField = useRef(null);
@@ -42,9 +44,34 @@ function Room({ match }) {
     
     messageSocket.onmessage = event => {
       const json = JSON.parse(event.data);
-      if (json && json.data) {
-        if (json.data.room === match.params.roomSlug && json.data.text) {
-          setMessages([...messages, json.data]);
+      if (json.error) {
+        console.error(json.error);
+        return;
+      }
+      switch (json.action) {
+        case 'messageSent': {
+          if (json.data) {
+            if (json.data.room === match.params.roomSlug && json.data.text) {
+              setMessages([...messages, json.data]);
+            }
+          }
+          break;
+        }
+        case 'userIsTyping': {
+          if (json.data) {
+            if (json.data.user && json.data.room === match.params.roomSlug) {
+              setUserTyping(json.data.user.username);
+              window.clearTimeout(typingTimer);
+              typingTimer = window.setTimeout(() => {
+                setUserTyping('');
+              }, 1000)
+            }
+          }
+          break;
+        }
+        default: {
+          console.error('unknown websocket message');
+          break;
         }
       }
     };
@@ -93,6 +120,7 @@ function Room({ match }) {
 
   function updateMessageText(e) {
     setMessageText(e.target.value);
+    sendTypingNotifier();
   }
 
   async function sendMessage(e) {
@@ -112,6 +140,18 @@ function Room({ match }) {
     }
 
     setMessageText('');
+  }
+
+  async function sendTypingNotifier() {
+    if (socketOpen) {
+      messageSocket.send(JSON.stringify({
+        action: 'userIsTyping',
+        data: {
+          user_id: user._id,
+          room: match.params.roomSlug,
+        }
+      }))
+    }
   }
 
   function showEmojiPicker() {
@@ -145,6 +185,7 @@ function Room({ match }) {
           <p ref={bottomOfChat} className={styles.bottom}></p>
         </div>
       </div>
+      <div className={styles.userTyping}>{ userTyping ? `${userTyping} is typing...` : null }</div>
       <form onSubmit={sendMessage}>
         { emojiPickerVisible ? <div className={styles.emojiWrapper}><EmojiPicker onEmojiSelected={insertEmoji} modal={true} /></div> : null }
         <ControlGroup fill={true}>
