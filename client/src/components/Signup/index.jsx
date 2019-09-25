@@ -47,7 +47,7 @@ function Signup({ onLoggedIn }) {
         { errorMessage ? <p className="error">{errorMessage}</p> : null }
 
         <FormGroup label="User Name" labelFor="user_name" labelInfo="(required)">
-          <InputGroup id="user_name" value={username} onChange={handleUserNameChange} />
+          <InputGroup id="user_name" value={username} onChange={handleUserNameChange} autoFocus={true} />
         </FormGroup>
         
         <FormGroup label="Email" labelFor="email" labelInfo="(required)">
