@@ -27,7 +27,7 @@ function Room({ match }) {
   }, []);
 
   useEffect(() => {
-    messageSocket = new WebSocket("ws://localhost:8080");
+    messageSocket = new WebSocket("wss://localhost:8080");
     return () => {
       messageSocket.close();
     }
@@ -63,7 +63,6 @@ function Room({ match }) {
 
       const json = await response.json();
       if (json && json.room) {
-        console.log(json)
         setRoomName(json.room.name);
         setRoomDesc(json.room.description);
       }
