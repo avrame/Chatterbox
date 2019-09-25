@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  H2,
   Button,
   FormGroup,
   InputGroup,
@@ -72,7 +73,7 @@ function Home ({ loggedIn }) {
         ? (
           <>
             <form onSubmit={createNewRoom}>
-              <h2>Create a Room</h2>
+              <H2>Create a Room</H2>
               <FormGroup label="Name" className="inline" labelFor="room_name" inline={true}>
                 <InputGroup id="room_name" value={roomName} onChange={updateRoomName} />
               </FormGroup>
@@ -82,7 +83,9 @@ function Home ({ loggedIn }) {
               <Button type="submit">Create</Button>
             </form>
 
-            <h2>Rooms</h2>
+            <hr />
+
+            <H2>Rooms</H2>
             <HTMLTable>
               <thead>
                 <tr>

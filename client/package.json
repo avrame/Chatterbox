@@ -4,9 +4,15 @@
   "private": true,
   "proxy": "http://localhost:3001",
   "dependencies": {
+    "@blueprintjs/core": "3.18.1",
+    "babel-core": "6.26.3",
+    "gravatar": "1.8.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.2"
+    "react-scripts": "3.1.2",
+    "react-emojipicker": "1.1.1",
+    "react-recaptcha": "2.3.10",
+    "react-router-dom": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

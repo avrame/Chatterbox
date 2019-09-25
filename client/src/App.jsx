@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog } from '@blueprintjs/core';
+import { H1, Dialog } from '@blueprintjs/core';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import Signup from './components/Signup';
@@ -48,7 +48,7 @@ function App() {
     <Router>
       <div className="app">
         <header>
-          <h1>Chatterbox</h1>
+          <H1>Chatterbox</H1>
           <AccountButtons onLogout={handleLogout}
                           showLogin={showLogin}
                           showSignup={showSignup}

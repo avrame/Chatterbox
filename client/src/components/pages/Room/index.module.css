@@ -45,17 +45,7 @@
   margin: 0;
 }
 
-.form {
-  display: flex;
-  justify-content: stretch;
-  align-items: stretch;
-}
-
-.form .formGroup {
-  width: 100%;
-  margin-right: 1rem;
-  margin-bottom: 0;
-}
-.form .formGroup .formContent {
-  width: 100%;
+.emojiWrapper {
+  position: relative;
+  bottom: 375px;
 }

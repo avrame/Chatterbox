@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, FormGroup, InputGroup } from '@blueprintjs/core';
+import { H2, Button, InputGroup, ControlGroup } from '@blueprintjs/core';
 import gravatar from 'gravatar';
+import EmojiPicker from 'react-emojipicker';
 
 import styles from './index.module.css';
 
@@ -14,8 +15,10 @@ function Room({ match }) {
   const [roomName, setRoomName] = useState('');
   const [roomDesc, setRoomDesc] = useState('');
   const [socketOpen, setSocketOpen] = useState(false);
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const bottomOfChat = useRef(null);
+  const messageField = useRef(null);
 
   useEffect(() => {
     getRoom();
@@ -94,6 +97,8 @@ function Room({ match }) {
   async function sendMessage(e) {
     e.preventDefault();
 
+    if (messageText.length === 0) return;
+
     if (socketOpen) {
       messageSocket.send(JSON.stringify({
         action: 'postMessage',
@@ -108,10 +113,20 @@ function Room({ match }) {
     setMessageText('');
   }
 
+  function showEmojiPicker() {
+    setEmojiPickerVisible(true);
+  }
+
+  function insertEmoji(emoji) {
+    setEmojiPickerVisible(false);
+    setMessageText(messageText + emoji.unicode);
+    messageField.current.focus();
+  }
+
   return (
     <div className={styles.room}>
       <Link to='/'>&lt; Back</Link>
-      <h2>{ roomName }</h2>
+      <H2>{ roomName }</H2>
       <p className={styles.description}>{ roomDesc }</p>
       <div className={styles.messagesContainer}>
         <div className={styles.messages}>
@@ -130,12 +145,12 @@ function Room({ match }) {
         </div>
       </div>
       <form onSubmit={sendMessage}>
-        <div className={styles.form}>
-          <FormGroup className={styles.formGroup} contentClassName={styles.formContent} inline={true}>
-            <InputGroup value={messageText} onChange={updateMessageText} fill={true} />
-          </FormGroup>
+        { emojiPickerVisible ? <div className={styles.emojiWrapper}><EmojiPicker onEmojiSelected={insertEmoji} modal={true} /></div> : null }
+        <ControlGroup fill={true}>
+          <Button onClick={showEmojiPicker}>😀</Button>
+          <InputGroup inputRef={messageField} value={messageText} onChange={updateMessageText} fill={true} />
           <Button type="submit">Send</Button>
-        </div>
+        </ControlGroup>
       </form>
     </div>
   )
