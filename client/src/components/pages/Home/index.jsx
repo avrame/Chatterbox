@@ -8,6 +8,8 @@ import {
 } from '@blueprintjs/core';
 import { Link } from 'react-router-dom';
 
+import styles from './index.module.css';
+
 function Home ({ loggedIn }) {
   const [rooms, setRooms] = useState([]);
   const [roomName, setRoomName] = useState('');
@@ -78,7 +80,7 @@ function Home ({ loggedIn }) {
                 <InputGroup id="room_name" value={roomName} onChange={updateRoomName} />
               </FormGroup>
               <FormGroup label="Description" className="inline" labelFor="room_desc" inline={true}>
-                <InputGroup id="room_desc" value={roomDescription} onChange={updateRoomDescription} />
+                <InputGroup id="room_desc" className={styles.roomDescription} value={roomDescription} onChange={updateRoomDescription} />
               </FormGroup>
               <Button type="submit">Create</Button>
             </form>
