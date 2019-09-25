@@ -9,7 +9,8 @@ body {
 .app {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 40px auto;
+  height: calc(100vh - 80px);
   background: #FFF;
   border-radius: 8px;
   box-shadow: #999 6px 6px 8px;
@@ -21,7 +22,6 @@ header {
   justify-content: space-between;
   align-items: center;
   background: #BBB;
-  margin-top: 40px;
   border-radius: 8px 8px 0 0;
 }
 
@@ -31,6 +31,7 @@ header h1 {
 
 .content {
   padding: 20px;
+  height: calc(100% - 80px);
 }
 
 /* Blueprint overrides */

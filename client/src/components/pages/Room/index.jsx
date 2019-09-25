@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core';
 
-let messageSocket = new WebSocket("ws://localhost:8080");
+import styles from './index.module.css';
+
+let messageSocket;
 
 function Room({ match }) {
   const [messages, setMessages] = useState([]);
@@ -11,17 +13,38 @@ function Room({ match }) {
   const [roomDesc, setRoomDesc] = useState('');
   const [socketOpen, setSocketOpen] = useState(false);
 
+  const bottomOfChat = useRef(null);
+
   useEffect(() => {
     getRoom();
     getMessages();
-    messageSocket.addEventListener('open', (event) => {
-      console.log('socket open', event)
-      setSocketOpen(true);
-    });
-    messageSocket.addEventListener('message', event => {
-      console.log('message', event.data)
-    });
   }, []);
+
+  useEffect(() => {
+    messageSocket = new WebSocket("ws://localhost:8080");
+    return () => {
+      messageSocket.close();
+    }
+  }, []);
+
+  useEffect(() => {
+    messageSocket.onopen = (event) => {
+      setSocketOpen(true);
+    };
+    
+    messageSocket.onmessage = event => {
+      const json = JSON.parse(event.data);
+      if (json && json.data) {
+        if (json.data.room === roomName && json.data.text) {
+          setMessages([...messages, { text: json.data.text }]);
+        }
+      }
+    };
+  }, [messages, roomName]);
+
+  useEffect(() => {
+    bottomOfChat.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   async function getRoom() {
     try {
@@ -81,22 +104,27 @@ function Room({ match }) {
   }
 
   return (
-    <div className="room">
+    <div className={styles.room}>
       <Link to='/'>&lt; Back</Link>
       <h2>{ roomName }</h2>
-      <p>{ roomDesc }</p>
-      <ol>
-        {
-          messages.map((message, idx) => {
-            return <li key={idx}>{ message.text }</li>;
-          })
-        }
-      </ol>
+      <p className={styles.description}>{ roomDesc }</p>
+      <div className={styles.messagesContainer}>
+        <div className={styles.messages}>
+          {
+            messages.map((message, idx) => {
+              return <div key={idx}>{ message.text }</div>;
+            })
+          }
+          <p ref={bottomOfChat} className={styles.bottom}></p>
+        </div>
+      </div>
       <form onSubmit={sendMessage}>
-        <FormGroup>
-          <InputGroup value={messageText} onChange={updateMessageText} />
-        </FormGroup>
-        <Button type="submit">Send</Button>
+        <div className={styles.form}>
+          <FormGroup className={styles.formGroup} contentClassName={styles.formContent} inline={true}>
+            <InputGroup value={messageText} onChange={updateMessageText} fill={true} />
+          </FormGroup>
+          <Button type="submit">Send</Button>
+        </div>
       </form>
     </div>
   )
