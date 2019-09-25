@@ -16,7 +16,7 @@ const messages = require('./routes/messages');
 const isAuthorized = require('./auth');
 
 const app = express();
-const wss = new WebSocket.Server({ port: 5000, path: '/websocket' });
+const wss = new WebSocket.Server({ port: 403, path: '/websocket' });
 const PORT = process.env.PORT || 3001;
 
 mongoose.connect(`mongodb+srv://avrame:${process.env.MONGODB_PASSWORD}@chatterbox-abw5o.mongodb.net/chatterbox?retryWrites=true&w=majority`, { useNewUrlParser: true });
