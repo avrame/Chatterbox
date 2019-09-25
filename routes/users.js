@@ -5,7 +5,8 @@ const passport = require('passport');
 
 router.post('/signup', (req, res, next) => {
   User.register(new User({
-      username: req.body.username
+      username: req.body.username,
+      email: req.body.email,
     }),
     req.body.password, (err, user) => {
       res.setHeader('Content-Type', 'application/json');

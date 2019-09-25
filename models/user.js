@@ -6,6 +6,11 @@ var UserSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: true
   }
 });
 

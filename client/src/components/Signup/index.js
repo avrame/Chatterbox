@@ -5,6 +5,8 @@ function Signup({ onLoggedIn }) {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [email, setEmail] = useState('');
+
 
   function handleUserNameChange(e) {
     setUserName(e.target.value);
@@ -14,14 +16,19 @@ function Signup({ onLoggedIn }) {
     setPassword(e.target.value);
   }
 
-  async function signupUser() {
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
+
+  async function signupUser(e) {
+    e.preventDefault();
     try {
       const response = await fetch('/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, email })
       });
 
       const json = await response.json();
@@ -41,6 +48,10 @@ function Signup({ onLoggedIn }) {
 
         <FormGroup label="User Name" labelFor="user_name" labelInfo="(required)">
           <InputGroup id="user_name" value={username} onChange={handleUserNameChange} />
+        </FormGroup>
+        
+        <FormGroup label="Email" labelFor="email" labelInfo="(required)">
+          <InputGroup id="email" value={email} onChange={handleEmailChange} />
         </FormGroup>
 
         <FormGroup label="Password" labelFor="password" labelInfo="(required)">
